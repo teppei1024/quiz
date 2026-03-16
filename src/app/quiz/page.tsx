@@ -6,14 +6,19 @@ import { useQuizData, QuizData } from "@/lib/useQuizData";
 import { getQuizProgress, saveEvaluation, QuizProgress, EvaluationResult } from "@/lib/useProgress";
 import { useTestRange } from "@/lib/useTestRange";
 import LoginScreen from "@/components/LoginScreen";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function QuizApp() {
+import { Suspense } from "react";
+
+function QuizAppContent() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const initialGrade = searchParams.get("grade") || "";
+
   // ★学年お試し機能: UIで選択された学年を保持するState
-  const [overrideGrade, setOverrideGrade] = useState<string>("");
+  const [overrideGrade, setOverrideGrade] = useState<string>(initialGrade);
 
   const { testRangeUnitIds, loading: testRangeLoading } = useTestRange(user?.uid, overrideGrade);
   const { quizzes, loading: quizLoading, error } = useQuizData();
@@ -513,5 +518,17 @@ export default function QuizApp() {
         </article>
       </main>
     </>
+  );
+}
+
+export default function QuizApp() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <p>準備中...</p>
+      </div>
+    }>
+      <QuizAppContent />
+    </Suspense>
   );
 }

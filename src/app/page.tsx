@@ -139,6 +139,9 @@ export default function Dashboard() {
     return <LoginScreen />;
   }
 
+  // お試し学年の選択用のState
+  const [selectedGrade, setSelectedGrade] = useState<string>("");
+
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: "20px", paddingBottom: "100px", color: "var(--text-color, #333)" }}>
       <header style={{ marginBottom: 30, textAlign: "center" }}>
@@ -210,8 +213,45 @@ export default function Dashboard() {
 
       {/* 下部固定の学習開始ボタン */}
       <div style={{ textAlign: "center", position: "fixed", bottom: 0, left: 0, right: 0, padding: 16, background: "rgba(18,18,18,0.9)", backdropFilter: "blur(8px)", borderTop: "1px solid #333", zIndex: 10 }}>
+        
+        {/* お試し用の学年切り替えUI */}
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", marginBottom: "12px", fontSize: "0.9rem" }}>
+          <label htmlFor="grade-select" style={{ color: "#eee" }}>テスト範囲を選択して開始：</label>
+          <select 
+            id="grade-select"
+            value={selectedGrade}
+            onChange={(e) => setSelectedGrade(e.target.value)}
+            style={{ 
+              padding: "6px 10px", 
+              borderRadius: "6px", 
+              border: "1px solid #555",
+              background: "#333",
+              color: "white",
+              fontSize: "0.9rem",
+              cursor: "pointer"
+            }}
+          >
+            <option value="">本来の学年（推奨）</option>
+            <option value="j1">中1をお試し</option>
+            <option value="j2">中2をお試し</option>
+            <option value="j3">中3をお試し</option>
+            <option value="e1">小1をお試し</option>
+            <option value="e2">小2をお試し</option>
+            <option value="e3">小3をお試し</option>
+            <option value="e4">小4をお試し</option>
+            <option value="e5">小5をお試し</option>
+            <option value="e6">小6をお試し</option>
+          </select>
+        </div>
+
         <button 
-          onClick={() => router.push('/quiz')}
+          onClick={() => {
+            if (selectedGrade) {
+               router.push(`/quiz?grade=${selectedGrade}`);
+            } else {
+               router.push('/quiz');
+            }
+          }}
           style={{
             background: "linear-gradient(135deg, var(--primary) 0%, #2563eb 100%)",
             color: "white", padding: "18px 32px", borderRadius: "30px", fontSize: "1.3rem", fontWeight: "bold", border: "none", cursor: "pointer", width: "100%", maxWidth: 600, boxShadow: "0 4px 15px rgba(59, 130, 246, 0.5)", transition: "transform 0.2s"
