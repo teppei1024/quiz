@@ -75,7 +75,7 @@ function QuizAppContent() {
         // ★テスト範囲連動: 取得したテスト範囲(testRangeUnitIds)に含まれる単元の問題のみを対象とする
         // （※テスト範囲が空の場合はとりあえず「全範囲」として出題する、または「テスト範囲なし」扱いにする等の運用が可能です。今回はテスト範囲がある場合はフィルタリングします）
         if (testRangeUnitIds.length > 0) {
-          const unitNo = quiz["単元番号"];
+          const unitNo = quiz["単元番号"] || quiz["単元"];
           // "1-1"などの単元番号が、ラーニングサイトで設定したテスト対象の単元に含まれていなければ除外
           if (!unitNo || !testRangeUnitIds.includes(unitNo)) {
             continue;

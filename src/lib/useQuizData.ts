@@ -6,6 +6,7 @@ export interface QuizData {
   "学年"?: string;
   "学年・分野"?: string;
   "単元番号"?: string;
+  "単元"?: string;
   "問題文": string;
   "問題用画像URL"?: string;
   "解答": string;
@@ -25,13 +26,15 @@ export function useQuizData() {
   useEffect(() => {
     async function fetchQuizzes() {
       try {
-        const url = process.env.NEXT_PUBLIC_GAS_API_URL;
+        const url = process.env.NEXT_PUBLIC_QUIZ_DATA_URL;
         if (!url) {
-          throw new Error("GASのAPI URLが設定されていません。");
+          throw new Error("クイズデータのURLが設定されていません。");
         }
 
-        const res = await fetch(url, {
-          redirect: "follow"
+        // GitHubからの取得ではキャッシュを都度無視するかどうかは要件によりますが、
+        // 最新のデータを取得するためキャッシュを無効化しています（必要に応じて外してください）
+        const res = await fetch(url + '?t=' + new Date().getTime(), {
+          cache: 'no-store'
         });
 
         if (!res.ok) {

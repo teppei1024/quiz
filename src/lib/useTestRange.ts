@@ -42,9 +42,8 @@ export function useTestRange(userId: string | undefined, overrideGrade?: string)
         const targetUnits: string[] = [];
         querySnapshot.forEach((docSnap) => {
           const lessonData = docSnap.data();
-          // クイズ側の「単元番号」は "1-1" などの形式。
-          // ラーニングサイトのlessonのtitleから、先頭の番号部分（例: "1-1 符号のついた数" -> "1-1"）を抽出する
-          const match = lessonData.title.match(/^([0-9]+-[0-9]+)/);
+          // ラーニングサイトのlessonのtitleから、先頭の半角英数字（例: "1-1 符号のついた数" -> "1-1", "RL リーディング" -> "RL"）を抽出する
+          const match = lessonData.title.match(/^([a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*)/);
           if (match && match[1]) {
             targetUnits.push(match[1]); // 例: "1-1"
           }
