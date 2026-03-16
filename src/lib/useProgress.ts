@@ -36,9 +36,13 @@ export async function getAllProgress(userId: string): Promise<QuizProgress[]> {
     const querySnapshot = await getDocs(progressRef);
     
     return querySnapshot.docs.map(doc => doc.data() as QuizProgress);
-  } catch (error) {
-    console.error("全進捗取得エラー:", error);
-    return [];
+  } catch (error: any) {
+    if (error?.code === "permission-denied") {
+      console.warn("全進捗取得: permission-denied (権限がないためスキップします)");
+    } else {
+      console.error("全進捗取得エラー:", error);
+    }
+    return []; // エラー時は空配列を返すことでUIクラッシュを防ぐ
   }
 }
 
@@ -173,8 +177,12 @@ export async function getLeaderboard(limitNum = 10) {
     }).filter(user => user.totalScore > 0);
     
     return leaderboard;
-  } catch (error) {
-    console.error("ランキング取得エラー:", error);
-    return [];
+  } catch (error: any) {
+    if (error?.code === "permission-denied") {
+      console.warn("ランキング取得: permission-denied (権限がないためスキップします)");
+    } else {
+      console.error("ランキング取得エラー:", error);
+    }
+    return []; // エラー時は空配列を返すことでクラッシュを防ぐ
   }
 }
