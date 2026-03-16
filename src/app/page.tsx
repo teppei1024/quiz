@@ -70,10 +70,11 @@ export default function Dashboard() {
       stats[subject].total += 1;
     });
 
-    progressData.forEach(p => {
+    (progressData || []).forEach(p => {
+      if (!p) return;
       if (p.status === "mastered" || p.status === "review") {
-        const q = quizzes.find(quiz => quiz["ID(自動生成)"] === p.quizId);
-        if (q && q["学年・分野"]) {
+        const q = quizzes.find(quiz => quiz && quiz["ID(自動生成)"] === p.quizId);
+        if (q && q["学年・分野"] && stats[q["学年・分野"]]) {
           stats[q["学年・分野"]].learned += 1;
         }
       }
@@ -178,6 +179,7 @@ export default function Dashboard() {
           </thead>
           <tbody>
             {leaderboard.map((u, i) => {
+              if (!u || !u.uid) return null; // データが不正な場合はスキップしてクラッシュを防ぐ
               const rankColor = i === 0 ? "#FFD700" : i === 1 ? "#C0C0C0" : i === 2 ? "#cd7f32" : "#fff";
               
               return (
@@ -193,13 +195,13 @@ export default function Dashboard() {
                         <div style={{ width: 30, height: 30, borderRadius: "50%", background: "#555" }} />
                       )}
                       <span>
-                        {u.displayName} 
+                        {u.displayName || "名無し"} 
                         {u.uid === user.uid && <span style={{ marginLeft: 6, fontSize: "0.8rem", color: "var(--primary)", background: "rgba(54, 162, 235, 0.2)", padding: "2px 6px", borderRadius: 10 }}>あなた</span>}
                       </span>
                     </div>
                   </td>
                   <td style={{ textAlign: "right", fontWeight: "bold", fontSize: "1.1rem", color: u.uid === user.uid ? "var(--primary)" : "#ddd" }}>
-                    {u.totalScore.toLocaleString()}
+                    {(u.totalScore || 0).toLocaleString()}
                   </td>
                 </tr>
               );
