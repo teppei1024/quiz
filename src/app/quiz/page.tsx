@@ -11,7 +11,11 @@ import { useRouter } from "next/navigation";
 export default function QuizApp() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const { testRangeUnitIds, loading: testRangeLoading } = useTestRange(user?.uid);
+
+  // ★学年お試し機能: UIで選択された学年を保持するState
+  const [overrideGrade, setOverrideGrade] = useState<string>("");
+
+  const { testRangeUnitIds, loading: testRangeLoading } = useTestRange(user?.uid, overrideGrade);
   const { quizzes, loading: quizLoading, error } = useQuizData();
   const [showAnswer, setShowAnswer] = useState(false);
   
@@ -268,13 +272,46 @@ export default function QuizApp() {
 
   return (
     <>
-      <div style={{ padding: "10px 20px", background: "var(--card-bg)" }}>
+      <div style={{ padding: "10px 20px", background: "var(--card-bg)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
         <button 
           onClick={() => router.push('/')}
           style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "1rem", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, padding: 0 }}
         >
           <span>←</span> ダッシュボードに戻る
         </button>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.9rem" }}>
+          <label htmlFor="grade-select" style={{ color: "var(--text-color)" }}>テスト範囲:</label>
+          <select 
+            id="grade-select"
+            value={overrideGrade}
+            onChange={(e) => {
+              setOverrideGrade(e.target.value);
+              setIsReady(false); // 再計算させるためにローディング状態に戻す
+              setCurrentIndex(0);
+              setShowAnswer(false);
+            }}
+            style={{ 
+              padding: "4px 8px", 
+              borderRadius: "4px", 
+              border: "1px solid #ccc",
+              background: "white",
+              color: "black",
+              fontSize: "0.9rem"
+            }}
+          >
+            <option value="">本来の学年</option>
+            <option value="j1">中1</option>
+            <option value="j2">中2</option>
+            <option value="j3">中3</option>
+            <option value="e1">小1</option>
+            <option value="e2">小2</option>
+            <option value="e3">小3</option>
+            <option value="e4">小4</option>
+            <option value="e5">小5</option>
+            <option value="e6">小6</option>
+          </select>
+        </div>
       </div>
       <header className="header" style={{ paddingTop: 0 }}>
         <div className="header-content">

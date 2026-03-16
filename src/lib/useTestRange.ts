@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 
-export function useTestRange(userId: string | undefined) {
+export function useTestRange(userId: string | undefined, overrideGrade?: string) {
   const [testRangeUnitIds, setTestRangeUnitIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,9 @@ export function useTestRange(userId: string | undefined) {
         }
         
         const userData = userDocSnap.data();
-        const grade = userData.grade; // 例: "j1", "j2"
+        
+        // ★本来の学年を overrideGrade があれば優先して使用する★
+        const grade = overrideGrade || userData.grade; // 例: "j1", "j2"
 
         if (!grade) {
           throw new Error('学年が設定されていません');
@@ -59,7 +61,7 @@ export function useTestRange(userId: string | undefined) {
     }
 
     fetchTestRange();
-  }, [userId]);
+  }, [userId, overrideGrade]);
 
   return { testRangeUnitIds, loading, error };
 }
