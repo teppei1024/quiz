@@ -35,6 +35,9 @@ export default function Dashboard() {
   const [progressData, setProgressData] = useState<QuizProgress[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
+  
+  // お試し学年の選択用のState
+  const [selectedGrade, setSelectedGrade] = useState<string>("");
 
   useEffect(() => {
     async function loadDashboardData() {
@@ -139,9 +142,6 @@ export default function Dashboard() {
   if (!user) {
     return <LoginScreen />;
   }
-
-  // お試し学年の選択用のState
-  const [selectedGrade, setSelectedGrade] = useState<string>("");
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: "20px", paddingBottom: "100px", color: "var(--text-color, #333)" }}>
